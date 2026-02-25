@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>神龙剧本编辑器</title>
+    <style>
+        /* 全局样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #e5e7eb;
+            background-color: #121212;
+            background-image: linear-gradient(135deg, #121212 0%, #1e1e1e 100%);
+        }
+
+        /* 容器样式 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 头部样式 */
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        /* 工具栏样式 */
+        .toolbar {
+            background: #2d2d2d;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid #333;
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .toolbar button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .toolbar button:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        .toolbar input[type="file"] {
+            display: none;
+        }
+
+        .toolbar label {
+            background: #a78bfa;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+        }
+
+        .toolbar label:hover {
+            background: #9370db;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+
+        /* 主要内容样式 */
+        main {
+            background: #1e1e1e;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid #333;
+        }
+
+        /* 章节标题样式 */
+        h2 {
+            color: #667eea;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #333;
+        }
+
+        h3 {
+            color: #a78bfa;
+            font-size: 1.4rem;
+            margin: 25px 0 15px 0;
+        }
+
+        /* 核心主题和情感弧线样式 */
+        .core-info {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px solid #3d3d3d;
+        }
+
+        .core-info ul {
+            list-style-type: none;
+            margin: 10px 0;
+        }
+
+        .core-info li {
+            margin: 8px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .core-info li::before {
+            content: "•";
+            color: #667eea;
+            font-weight: bold;
+            position: absolute;
+            left: 0;
+        }
+
+        /* 情感弧线样式 */
+        .emotion-arc {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 15px 0;
+            align-items: center;
+        }
+
+        .emotion-arc span {
+            background: #374151;
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: #93c5fd;
+            font-weight: 500;
+            font-size: 0.9rem;
+            border: 1px solid #4b5563;
+        }
+
+        /* 风格指令样式 */
+        .style-guide {
+            background: #2d2d2d;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #f59e0b;
+            margin-bottom: 30px;
+            border: 1px solid #3d3d3d;
+        }
+
+        .style-guide p {
+            color: #e5e7eb;
+        }
+
+        /* 段落卡片样式 */
+        .paragraph {
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        /* 卡片容器 */
+        .paragraph-card {
+            background: #2d2d2d;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid #3d3d3d;
+            overflow: hidden;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .paragraph-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        /* 段落标题栏 */
+        .paragraph-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-bottom: 2px solid #444;
+        }
+
+        .paragraph-header h3 {
+            margin: 0;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .paragraph-header h3:hover {
+            color: #e0e7ff;
+        }
+
+        /* 可编辑元素激活状态 */
+        [contenteditable] {
+            outline: none;
+        }
+
+        [contenteditable].active {
+            outline: 2px solid #667eea;
+            border-radius: 4px;
+        }
+
+        /* 不同类型编辑元素的激活样式 */
+        .paragraph-header h3[contenteditable].active {
+            padding: 5px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* 段落内容区 */
+        .paragraph-content {
+            padding: 20px;
+        }
+
+        /* 镜头样式 */
+        .scene {
+            margin: 20px 0;
+            padding: 20px;
+            background: #374151;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            border: 1px solid #4b5563;
+            position: relative;
+        }
+
+        .scene:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            border-color: #667eea;
+        }
+
+        .scene p {
+            color: #d1d5db;
+        }
+
+        .scene-number {
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 10px;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+
+        .scene-content {
+            margin: 15px 0;
+            cursor: pointer;
+            line-height: 1.8;
+        }
+
+        .scene-number[contenteditable].active {
+            padding: 5px 10px;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .scene-content[contenteditable].active {
+            padding: 10px;
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        /* 代码框样式 */
+        .code-section {
+            margin: 15px 0 0 0;
+            background: #1f2937;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #374151;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #374151;
+            color: white;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            border-bottom: 1px solid #4b5563;
+        }
+
+        .copy-btn {
+            background: #4b5563;
+            color: white;
+            border: 1px solid #6b7280;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+
+        .copy-btn:hover {
+            background: #6b7280;
+            border-color: #9ca3af;
+        }
+
+        .copy-btn.copied {
+            background: #10b981;
+            border-color: #34d399;
+        }
+
+        pre {
+            background: #1f2937;
+            color: #e5e7eb;
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin: 0;
+            cursor: pointer;
+            border-radius: 0;
+        }
+
+        pre[contenteditable].active {
+            padding: 20px;
+        }
+
+        /* 右键菜单样式 */
+        .context-menu {
+            position: absolute;
+            background: #374151;
+            border: 1px solid #4b5563;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            z-index: 1000;
+            min-width: 150px;
+        }
+
+        .context-menu ul {
+            list-style: none;
+            padding: 5px 0;
+            margin: 0;
+        }
+
+        .context-menu li {
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .context-menu li:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        /* 后期制作建议样式 */
+        .post-production {
+            background: #2d2d2d;
+            padding: 25px;
+            border-radius: 8px;
+            margin-top: 40px;
+            border: 1px solid #3d3d3d;
+        }
+
+        .post-production h3 {
+            color: #6ee7b7;
+        }
+
+        .post-production p {
+            color: #d1d5db;
+        }
+
+        /* 系列规划样式 */
+        .series-plan {
+            margin-top: 20px;
+        }
+
+        .series-plan ol {
+            margin-left: 20px;
+            color: #e5e7eb;
+        }
+
+        .series-plan li {
+            margin: 15px 0;
+            padding: 10px;
+            background: #374151;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            border: 1px solid #4b5563;
+        }
+
+        .series-plan li strong {
+            color: #667eea;
+        }
+
+        /* 可编辑元素样式 */
+        [contenteditable="true"] {
+            outline: none;
+        }
+
+        /* contenteditable placeholder样式 */
+        [contenteditable="true"]:empty::before {
+            content: attr(placeholder);
+            color: #6b7280;
+            pointer-events: none;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            main {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .emotion-arc {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .code-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>神龙剧本编辑器---此刻你就是导演</h1>
+            <p class="subtitle">导入、编辑和保存你的.SLJB剧本文件</p>
+        </header>
+
+        <div class="toolbar">
+            <button id="newBtn">新建剧本</button>
+            <label for="fileInput">导入剧本</label>
+            <input type="file" id="fileInput" accept=".sljb">
+            <button id="saveBtn">保存剧本</button>
+        </div>
+
+        <main id="scriptContent">
+            <!-- 剧本内容将通过JavaScript动态生成 -->
+        </main>
+    </div>
+
+    <!-- 右键菜单 -->
+    <div class="context-menu" id="contextMenu" style="display: none;">
+        <ul>
+            <li id="insertBeforeItem">在之前插入</li>
+            <li id="insertAfterItem">在之后插入</li>
+            <li id="deleteItem">删除</li>
+        </ul>
+    </div>
+
+    <script>
+        // 全局变量
+        let currentScript = null;
+        let contextMenuTarget = null;
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            // 设置右键菜单
+            setupContextMenu();
+            
+            // 设置事件监听器
+            document.getElementById('newBtn').addEventListener('click', createNewScript);
+            document.getElementById('fileInput').addEventListener('change', handleFileImport);
+            document.getElementById('saveBtn').addEventListener('click', saveScript);
+        });
+
+        // 设置右键菜单
+        function setupContextMenu() {
+            const contextMenu = document.getElementById('contextMenu');
+            const insertBeforeItem = document.getElementById('insertBeforeItem');
+            const insertAfterItem = document.getElementById('insertAfterItem');
+            const deleteItem = document.getElementById('deleteItem');
+
+            // 点击空白处关闭右键菜单
+            document.addEventListener('click', function(e) {
+                if (!contextMenu.contains(e.target)) {
+                    contextMenu.style.display = 'none';
+                }
+            });
+
+            // 段落、镜头、蓝图项目、本片合成项目、核心主题项目和情感弧线项目右键菜单
+            document.addEventListener('contextmenu', function(e) {
+                // 先检查是否点击的是镜头
+                if (e.target.closest('.scene')) {
+                    e.preventDefault();
+                    contextMenuTarget = e.target.closest('.scene');
+                    
+                    // 获取镜头名称
+                    const sceneNumber = contextMenuTarget.querySelector('.scene-number').textContent;
+                    
+                    // 更新菜单项文本
+                    insertBeforeItem.textContent = `在"${sceneNumber}"前插入`;
+                    insertAfterItem.textContent = `在"${sceneNumber}"后插入`;
+                    deleteItem.textContent = '删除此镜头';
+                    
+                    showContextMenu(e, ['insertBeforeItem', 'insertAfterItem', 'deleteItem']);
+                } 
+                // 再检查是否点击的是段落（不包括镜头）
+                else if (e.target.closest('.paragraph') && !e.target.closest('.scene')) {
+                    e.preventDefault();
+                    contextMenuTarget = e.target.closest('.paragraph');
+                    
+                    // 获取段落标题
+                    const paragraphTitle = contextMenuTarget.querySelector('h3').textContent;
+                    
+                    // 更新菜单项文本
+                    insertBeforeItem.textContent = `在"${paragraphTitle}"前插入`;
+                    insertAfterItem.textContent = `在"${paragraphTitle}"后插入`;
+                    deleteItem.textContent = '删除此段落';
+                    
+                    showContextMenu(e, ['insertBeforeItem', 'insertAfterItem', 'deleteItem']);
+                }
+                // 检查是否点击的是蓝图项目
+                else if (e.target.closest('.post-production-plan')) {
+                    e.preventDefault();
+                    contextMenuTarget = e.target.closest('.post-production-plan');
+                    
+                    // 获取蓝图项目内容
+                    const planContent = contextMenuTarget.textContent;
+                    
+                    // 更新菜单项文本
+                    insertBeforeItem.textContent = `在"${planContent.substring(0, 20)}..."前插入`;
+                    insertAfterItem.textContent = `在"${planContent.substring(0, 20)}..."后插入`;
+                    deleteItem.textContent = '删除此蓝图项目';
+                    
+                    showContextMenu(e, ['insertBeforeItem', 'insertAfterItem', 'deleteItem']);
+                }
+                // 检查是否点击的是本片合成项目
+                else if (e.target.closest('.post-production-item')) {
+                    e.preventDefault();
+                    contextMenuTarget = e.target.closest('.post-production-item');
+                    
+                    // 获取项目类型和索引
+                    const itemType = contextMenuTarget.dataset.type;
+                    const itemIndex = parseInt(contextMenuTarget.dataset.index);
+                    
+                    // 获取项目内容
+                    const itemContent = contextMenuTarget.querySelector('span').textContent;
+                    
+                    // 更新菜单项文本
+                    insertBeforeItem.textContent = `在"${itemContent.substring(0, 20)}..."前插入`;
+                    insertAfterItem.textContent = `在"${itemContent.substring(0, 20)}..."后插入`;
+                    deleteItem.textContent = '删除此项';
+                    
+                    showContextMenu(e, ['insertBeforeItem', 'insertAfterItem', 'deleteItem']);
+                }
+                // 检查是否点击的是核心主题项目
+                else if (e.target.closest('.core-theme-item')) {
+                    e.preventDefault();
+                    contextMenuTarget = e.target.closest('.core-theme-item');
+                    
+                    // 获取核心主题内容
+                    const themeContent = contextMenuTarget.textContent;
+                    
+                    // 更新菜单项文本
+                    insertBeforeItem.textContent = `在"${themeContent.substring(0, 20)}..."前插入`;
+                    insertAfterItem.textContent = `在"${themeContent.substring(0, 20)}..."后插入`;
+                    deleteItem.textContent = '删除此核心主题';
+                    
+                    showContextMenu(e, ['insertBeforeItem', 'insertAfterItem', 'deleteItem']);
+                }
+                // 检查是否点击的是情感弧线项目
+                else if (e.target.closest('.emotion-arc-item')) {
+                    e.preventDefault();
+                    contextMenuTarget = e.target.closest('.emotion-arc-item');
+                    
+                    // 获取情感弧线内容
+                    const emotionContent = contextMenuTarget.textContent;
+                    
+                    // 更新菜单项文本
+                    insertBeforeItem.textContent = `在"${emotionContent}"前插入`;
+                    insertAfterItem.textContent = `在"${emotionContent}"后插入`;
+                    deleteItem.textContent = '删除此情感弧线项';
+                    
+                    showContextMenu(e, ['insertBeforeItem', 'insertAfterItem', 'deleteItem']);
+                }
+            });
+
+            // 右键菜单项事件
+            insertBeforeItem.addEventListener('click', function() {
+                if (contextMenuTarget) {
+                    if (contextMenuTarget.classList.contains('paragraph')) {
+                        addParagraphBefore(contextMenuTarget);
+                    } else if (contextMenuTarget.classList.contains('scene')) {
+                        addSceneBefore(contextMenuTarget);
+                    } else if (contextMenuTarget.classList.contains('post-production-plan')) {
+                        // 在蓝图项目前插入，内容为空，通过placeholder提示
+                        const planIndex = parseInt(contextMenuTarget.dataset.index);
+                        currentScript.postProduction.seriesPlan.splice(planIndex, 0, '');
+                        renderScript(currentScript);
+                    } else if (contextMenuTarget.classList.contains('post-production-item')) {
+                        // 在本片合成项目前插入，直接插入可编辑的新项目
+                        const itemType = contextMenuTarget.dataset.type;
+                        const itemIndex = parseInt(contextMenuTarget.dataset.index);
+                        
+                        // 直接插入新项目，内容为空
+                        // 插入新项目，内容为空，通过placeholder提示
+                        if (itemType === 'editing') {
+                            currentScript.postProduction.editing.splice(itemIndex, 0, '');
+                        } else if (itemType === 'sound') {
+                            currentScript.postProduction.sound.splice(itemIndex, 0, '');
+                        } else if (itemType === 'subtitles') {
+                            currentScript.postProduction.subtitles.splice(itemIndex, 0, '');
+                        }
+                        
+                        renderScript(currentScript);
+                    } else if (contextMenuTarget.classList.contains('core-theme-item')) {
+                        // 在核心主题前插入，内容为空，通过placeholder提示
+                        const themeIndex = parseInt(contextMenuTarget.dataset.index);
+                        currentScript.coreThemes.splice(themeIndex, 0, '');
+                        renderScript(currentScript);
+                    } else if (contextMenuTarget.classList.contains('emotion-arc-item')) {
+                        // 在情感弧线项前插入，内容为空，通过placeholder提示
+                        const emotionIndex = parseInt(contextMenuTarget.dataset.index);
+                        currentScript.emotionArc.splice(emotionIndex, 0, '');
+                        renderScript(currentScript);
+                    }
+                    contextMenu.style.display = 'none';
+                }
+            });
+            
+            insertAfterItem.addEventListener('click', function() {
+                if (contextMenuTarget) {
+                    if (contextMenuTarget.classList.contains('paragraph')) {
+                        addParagraphAfter(contextMenuTarget);
+                    } else if (contextMenuTarget.classList.contains('scene')) {
+                        addSceneAfter(contextMenuTarget);
+                    } else if (contextMenuTarget.classList.contains('post-production-plan')) {
+                        // 在蓝图项目后插入，内容为空，通过placeholder提示
+                        const planIndex = parseInt(contextMenuTarget.dataset.index);
+                        currentScript.postProduction.seriesPlan.splice(planIndex + 1, 0, '');
+                        renderScript(currentScript);
+                    } else if (contextMenuTarget.classList.contains('post-production-item')) {
+                        // 在本片合成项目后插入，直接插入可编辑的新项目
+                        const itemType = contextMenuTarget.dataset.type;
+                        const itemIndex = parseInt(contextMenuTarget.dataset.index);
+                        
+                        // 直接插入新项目，内容为空
+                        // 插入新项目，内容为空，通过placeholder提示
+                        if (itemType === 'editing') {
+                            currentScript.postProduction.editing.splice(itemIndex + 1, 0, '');
+                        } else if (itemType === 'sound') {
+                            currentScript.postProduction.sound.splice(itemIndex + 1, 0, '');
+                        } else if (itemType === 'subtitles') {
+                            currentScript.postProduction.subtitles.splice(itemIndex + 1, 0, '');
+                        }
+                        
+                        renderScript(currentScript);
+                    } else if (contextMenuTarget.classList.contains('core-theme-item')) {
+                        // 在核心主题后插入，内容为空，通过placeholder提示
+                        const themeIndex = parseInt(contextMenuTarget.dataset.index);
+                        currentScript.coreThemes.splice(themeIndex + 1, 0, '');
+                        renderScript(currentScript);
+                    } else if (contextMenuTarget.classList.contains('emotion-arc-item')) {
+                        // 在情感弧线项后插入，内容为空，通过placeholder提示
+                        const emotionIndex = parseInt(contextMenuTarget.dataset.index);
+                        currentScript.emotionArc.splice(emotionIndex + 1, 0, '');
+                        renderScript(currentScript);
+                    }
+                    contextMenu.style.display = 'none';
+                }
+            });
+            
+            deleteItem.addEventListener('click', function() {
+                if (contextMenuTarget) {
+                    if (contextMenuTarget.classList.contains('paragraph')) {
+                        deleteParagraph(contextMenuTarget);
+                    } else if (contextMenuTarget.classList.contains('scene')) {
+                        deleteScene(contextMenuTarget);
+                    } else if (contextMenuTarget.classList.contains('post-production-plan')) {
+                        // 删除蓝图项目
+                        const planIndex = parseInt(contextMenuTarget.dataset.index);
+                        if (confirm('确定要删除这个蓝图项目吗？')) {
+                            currentScript.postProduction.seriesPlan.splice(planIndex, 1);
+                            renderScript(currentScript);
+                        }
+                    } else if (contextMenuTarget.classList.contains('post-production-item')) {
+                        // 删除本片合成项目
+                        const itemType = contextMenuTarget.dataset.type;
+                        const itemIndex = parseInt(contextMenuTarget.dataset.index);
+                        
+                        if (confirm('确定要删除这个项目吗？')) {
+                            if (itemType === 'editing') {
+                                currentScript.postProduction.editing.splice(itemIndex, 1);
+                            } else if (itemType === 'sound') {
+                                currentScript.postProduction.sound.splice(itemIndex, 1);
+                            } else if (itemType === 'subtitles') {
+                                currentScript.postProduction.subtitles.splice(itemIndex, 1);
+                            }
+                            
+                            renderScript(currentScript);
+                        }
+                    } else if (contextMenuTarget.classList.contains('core-theme-item')) {
+                        // 删除核心主题
+                        const themeIndex = parseInt(contextMenuTarget.dataset.index);
+                        if (confirm('确定要删除这个核心主题吗？')) {
+                            currentScript.coreThemes.splice(themeIndex, 1);
+                            renderScript(currentScript);
+                        }
+                    } else if (contextMenuTarget.classList.contains('emotion-arc-item')) {
+                        // 删除情感弧线项
+                        const emotionIndex = parseInt(contextMenuTarget.dataset.index);
+                        if (confirm('确定要删除这个情感弧线项吗？')) {
+                            currentScript.emotionArc.splice(emotionIndex, 1);
+                            renderScript(currentScript);
+                        }
+                    }
+                    contextMenu.style.display = 'none';
+                }
+            });
+        }
+
+        // 显示右键菜单
+        function showContextMenu(e, itemsToShow) {
+            const contextMenu = document.getElementById('contextMenu');
+            
+            // 隐藏所有菜单项
+            Array.from(contextMenu.querySelectorAll('li')).forEach(item => {
+                item.style.display = 'none';
+            });
+            
+            // 显示指定菜单项
+            itemsToShow.forEach(itemId => {
+                document.getElementById(itemId).style.display = 'block';
+            });
+            
+            // 定位并显示菜单
+            contextMenu.style.left = e.pageX + 'px';
+            contextMenu.style.top = e.pageY + 'px';
+            contextMenu.style.display = 'block';
+        }
+
+        // 创建新剧本
+        function createNewScript() {
+            const newScript = {
+                "title": "新剧本",
+                "subtitle": "请输入副标题",
+                "coreThemes": [],
+                "emotionArc": [],
+                "styleGuide": "",
+                "paragraphs": [
+                    {
+                        "title": "",
+                        "scenes": [
+                            {
+                                "number": "",
+                                "content": ""
+                            },
+                            {
+                                "number": "",
+                                "content": ""
+                            },
+                            {
+                                "number": "",
+                                "content": ""
+                            }
+                        ],
+                        "prompt": ""
+                    }
+                ],
+                "postProduction": {
+                    "editing": [""],
+                    "sound": [""],
+                    "subtitles": [""],
+                    "seriesPlan": [""]
+                }
+            };
+            currentScript = newScript;
+            renderScript(newScript);
+        }
+
+        // 处理文件导入
+        function handleFileImport(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    try {
+                        const scriptData = JSON.parse(e.target.result);
+                        currentScript = scriptData;
+                        renderScript(scriptData);
+                    } catch (error) {
+                        alert('文件格式错误，请确保是有效的.SLJB文件');
+                    }
+                };
+                reader.readAsText(file);
+            }
+        }
+
+        // 渲染剧本
+        function renderScript(scriptData) {
+            const mainElement = document.getElementById('scriptContent');
+            mainElement.innerHTML = '';
+
+            // 渲染标题和副标题
+            const headerDiv = document.createElement('div');
+            headerDiv.innerHTML = `
+                <h2 contenteditable="true" class="script-title">${scriptData.title}</h2>
+                <p class="subtitle" contenteditable="true">${scriptData.subtitle}</p>
+            `;
+            mainElement.appendChild(headerDiv);
+
+            // 渲染核心信息
+            const coreInfoDiv = document.createElement('div');
+            coreInfoDiv.className = 'core-info';
+            coreInfoDiv.innerHTML = `
+                <h3>核心主题 <button class="add-item-btn" onclick="addCoreTheme()">+ 添加</button></h3>
+                <ul class="core-themes-list">
+                    ${scriptData.coreThemes.map((theme, index) => {
+                        const placeholder = theme === '' ? '新的核心主题' : '';
+                        return `<li contenteditable="true" class="core-theme-item" data-index="${index}" placeholder="${placeholder}">${theme}</li>`;
+                    }).join('')}
+                    ${scriptData.coreThemes.length === 0 ? '<li contenteditable="true" class="core-theme-item" data-index="0" placeholder="新的核心主题"></li>' : ''}
+                </ul>
+                <h3>情感弧线 <button class="add-item-btn" onclick="addEmotionArc()">+ 添加</button></h3>
+                <div class="emotion-arc">
+                    ${scriptData.emotionArc.map((emotion, index) => {
+                        const placeholder = emotion === '' ? '新的情感弧线项' : '';
+                        return `<span contenteditable="true" class="emotion-arc-item" data-index="${index}" placeholder="${placeholder}">${emotion}</span>`;
+                    }).join(' ')}
+                    ${scriptData.emotionArc.length === 0 ? '<span contenteditable="true" class="emotion-arc-item" data-index="0" placeholder="新的情感弧线项"></span>' : ''}
+                </div>
+            `;
+            mainElement.appendChild(coreInfoDiv);
+
+            // 渲染风格统一指令
+            const styleGuideDiv = document.createElement('div');
+            styleGuideDiv.className = 'style-guide';
+            styleGuideDiv.innerHTML = `
+                <h3>风格统一指令</h3>
+                <p contenteditable="true" class="style-guide-content">${scriptData.styleGuide}</p>
+            `;
+            mainElement.appendChild(styleGuideDiv);
+
+            // 渲染段落
+            scriptData.paragraphs.forEach((paragraph, paragraphIndex) => {
+                const paragraphDiv = document.createElement('div');
+                paragraphDiv.className = 'paragraph';
+                paragraphDiv.dataset.index = paragraphIndex;
+                
+                paragraphDiv.innerHTML = `
+                    <div class="paragraph-card">
+                            <div class="paragraph-header">
+                                <h3 contenteditable="true" placeholder="${paragraph.title === '' ? '【新段落】' : ''}">${paragraph.title}</h3>
+                            </div>
+                            <div class="paragraph-content">
+                                ${paragraph.scenes.map((scene, sceneIndex) => `
+                                    <div class="scene" data-index="${sceneIndex}">
+                                        <div class="scene-number" contenteditable="true" placeholder="${scene.number === '' ? '新镜头' : ''}">${scene.number}</div>
+                                        <p class="scene-content" contenteditable="true" placeholder="${scene.content === '' ? '新镜头内容' : ''}">${scene.content}</p>
+                                    </div>
+                                `).join('')}
+                                <div class="code-section">
+                                    <div class="code-header">
+                                        <span>Sora提示词（段落总提示）</span>
+                                        <button class="copy-btn" onclick="copyCode(this)">复制</button>
+                                    </div>
+                                    <pre contenteditable="true" class="paragraph-prompt" data-placeholder="新的Sora提示词（段落总提示）">${paragraph.prompt || ''}</pre>
+                                </div>
+                            </div>
+                        </div>
+                `;
+                
+                mainElement.appendChild(paragraphDiv);
+            });
+
+            // 渲染后期制作与系列规划
+            if (scriptData.postProduction) {
+                // 确保postProduction对象中有正确的属性结构
+                if (!scriptData.postProduction.editing) {
+                    scriptData.postProduction.editing = [];
+                } else if (!Array.isArray(scriptData.postProduction.editing)) {
+                    scriptData.postProduction.editing = [scriptData.postProduction.editing];
+                }
+                
+                if (!scriptData.postProduction.sound) {
+                    scriptData.postProduction.sound = [];
+                } else if (!Array.isArray(scriptData.postProduction.sound)) {
+                    scriptData.postProduction.sound = [scriptData.postProduction.sound];
+                }
+                
+                if (!scriptData.postProduction.subtitles) {
+                    scriptData.postProduction.subtitles = [];
+                } else if (!Array.isArray(scriptData.postProduction.subtitles)) {
+                    scriptData.postProduction.subtitles = [scriptData.postProduction.subtitles];
+                }
+                
+                const postProdDiv = document.createElement('div');
+                postProdDiv.className = 'post-production';
+                
+                // 渲染自定义项
+                let customItems = '';
+                
+                // 渲染剪辑项
+                customItems += scriptData.postProduction.editing.map((item, index) => {
+                    // 新项目标题和内容都显示占位符
+                    const title = item === '' ? '' : '剪辑';
+                    const titlePlaceholder = item === '' ? '新项目' : '';
+                    const contentPlaceholder = item === '' ? '项目内容' : '';
+                    return `<div class="post-production-item" data-type="editing" data-index="${index}" style="margin-bottom: 10px;">
+                        <p><strong contenteditable="true" class="custom-item-title" placeholder="${titlePlaceholder}">${title}</strong>：<span contenteditable="true" class="post-production-editing-item" data-index="${index}" placeholder="${contentPlaceholder}">${item}</span></p>
+                    </div>`;
+                }).join('');
+                
+                // 渲染音效与音乐项
+                customItems += scriptData.postProduction.sound.map((item, index) => {
+                    // 新项目标题和内容都显示占位符
+                    const title = item === '' ? '' : '音效与音乐';
+                    const titlePlaceholder = item === '' ? '新项目' : '';
+                    const contentPlaceholder = item === '' ? '项目内容' : '';
+                    return `<div class="post-production-item" data-type="sound" data-index="${index}" style="margin-bottom: 10px;">
+                        <p><strong contenteditable="true" class="custom-item-title" placeholder="${titlePlaceholder}">${title}</strong>：<span contenteditable="true" class="post-production-sound-item" data-index="${index}" placeholder="${contentPlaceholder}">${item}</span></p>
+                    </div>`;
+                }).join('');
+                
+                // 渲染字幕项
+                customItems += scriptData.postProduction.subtitles.map((item, index) => {
+                    // 新项目标题和内容都显示占位符
+                    const title = item === '' ? '' : '字幕';
+                    const titlePlaceholder = item === '' ? '新项目' : '';
+                    const contentPlaceholder = item === '' ? '项目内容' : '';
+                    return `<div class="post-production-item" data-type="subtitles" data-index="${index}" style="margin-bottom: 10px;">
+                        <p><strong contenteditable="true" class="custom-item-title" placeholder="${titlePlaceholder}">${title}</strong>：<span contenteditable="true" class="post-production-subtitles-item" data-index="${index}" placeholder="${contentPlaceholder}">${item}</span></p>
+                    </div>`;
+                }).join('');
+                
+                postProdDiv.innerHTML = `
+                    <h2>后期制作与系列规划</h2>
+                    <h3>本片合成：</h3>
+                    ${customItems}
+                    <h3>系列规划蓝图：</h3>
+                    <ol class="series-plan">
+                    ${scriptData.postProduction.seriesPlan.map((plan, index) => {
+                        const placeholder = plan === '' ? '新的蓝图项目' : '';
+                        return `<li contenteditable="true" class="post-production-plan" data-index="${index}" placeholder="${placeholder}">${plan}</li>`;
+                    }).join('')}
+                </ol>
+                `;
+                mainElement.appendChild(postProdDiv);
+            }
+
+            // 添加事件监听器，保存编辑内容
+            setupEditListeners();
+        }
+
+        // 设置编辑监听器
+        function setupEditListeners() {
+            // 监听可编辑元素的点击事件
+            document.querySelectorAll('[contenteditable]').forEach(element => {
+                element.addEventListener('click', handleEditClick);
+                element.addEventListener('blur', handleEditBlur);
+                element.addEventListener('input', saveEdit);
+            });
+        }
+
+        // 处理编辑框点击事件
+        function handleEditClick(e) {
+            // 移除所有编辑框的active类
+            document.querySelectorAll('[contenteditable].active').forEach(elem => {
+                elem.classList.remove('active');
+            });
+            // 给当前点击的编辑框添加active类
+            e.target.classList.add('active');
+        }
+
+        // 处理编辑框失去焦点事件
+        function handleEditBlur(e) {
+            // 移除当前编辑框的active类
+            e.target.classList.remove('active');
+        }
+
+        // 保存编辑内容
+        function saveEdit(e) {
+            const element = e.target;
+            const value = element.textContent;
+            
+            // 确定编辑的是哪个部分
+            if (element.className === 'script-title') {
+                // 剧本标题
+                currentScript.title = value;
+            } else if (element.className === 'subtitle' && !element.closest('.post-production')) {
+                // 剧本副标题（排除后期制作中的subtitle）
+                currentScript.subtitle = value;
+            } else if (element.className === 'core-theme-item') {
+                // 核心主题
+                const index = parseInt(element.dataset.index);
+                currentScript.coreThemes[index] = value;
+            } else if (element.className === 'emotion-arc-item') {
+                // 情感弧线
+                const index = parseInt(element.dataset.index);
+                currentScript.emotionArc[index] = value;
+            } else if (element.className === 'style-guide-content') {
+                // 风格统一指令
+                currentScript.styleGuide = value;
+            } else if (element.tagName === 'H3' && element.closest('.paragraph')) {
+                // 段落标题
+                const paragraphIndex = parseInt(element.closest('.paragraph').dataset.index);
+                currentScript.paragraphs[paragraphIndex].title = value;
+            } else if (element.className === 'scene-number') {
+                // 镜头序号
+                const paragraphIndex = parseInt(element.closest('.paragraph').dataset.index);
+                const sceneIndex = parseInt(element.closest('.scene').dataset.index);
+                currentScript.paragraphs[paragraphIndex].scenes[sceneIndex].number = value;
+            } else if (element.className === 'scene-content') {
+                // 镜头内容
+                const paragraphIndex = parseInt(element.closest('.paragraph').dataset.index);
+                const sceneIndex = parseInt(element.closest('.scene').dataset.index);
+                currentScript.paragraphs[paragraphIndex].scenes[sceneIndex].content = value;
+            } else if (element.className === 'paragraph-prompt') {
+                // 段落总提示词
+                const paragraphIndex = parseInt(element.closest('.paragraph').dataset.index);
+                currentScript.paragraphs[paragraphIndex].prompt = value;
+            } else if (element.className === 'post-production-editing-item') {
+                // 后期制作剪辑内容项
+                const index = parseInt(element.dataset.index);
+                currentScript.postProduction.editing[index] = value;
+            } else if (element.className === 'post-production-sound-item') {
+                // 后期制作音效与音乐内容项
+                const index = parseInt(element.dataset.index);
+                currentScript.postProduction.sound[index] = value;
+            } else if (element.className === 'post-production-subtitles-item') {
+                // 后期制作字幕内容项
+                const index = parseInt(element.dataset.index);
+                currentScript.postProduction.subtitles[index] = value;
+            } else if (element.className === 'post-production-plan') {
+                // 系列规划内容
+                const index = parseInt(element.dataset.index);
+                currentScript.postProduction.seriesPlan[index] = value;
+            }
+        }
+
+        // 保存剧本
+        function saveScript() {
+            if (currentScript) {
+                // 使用剧本标题作为文件名
+                const defaultFileName = currentScript.title ? currentScript.title.replace(/[\\/:*?"<>|]/g, '') + '.sljb' : 'script.sljb';
+                
+                // 保存文件
+                const scriptData = JSON.stringify(currentScript, null, 2);
+                const blob = new Blob([scriptData], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = defaultFileName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            } else {
+                alert('请先导入或创建剧本');
+            }
+        }
+
+        // 添加新段落
+        function addNewParagraph() {
+            if (!currentScript) {
+                alert('请先导入或创建剧本');
+                return;
+            }
+
+            // 插入空内容的段落，通过placeholder提示
+            const newParagraph = {
+                title: '',
+                scenes: [
+                    {
+                        number: '',
+                        content: ''
+                    }
+                ],
+                prompt: ''
+            };
+
+            currentScript.paragraphs.push(newParagraph);
+            renderScript(currentScript);
+        }
+
+        // 保存所有编辑内容
+        function saveAllEdits() {
+            document.querySelectorAll('[contenteditable="true"]').forEach(element => {
+                if (element.classList.contains('script-title')) {
+                    currentScript.title = element.textContent;
+                } else if (element.className === 'subtitle' && !element.closest('.post-production')) {
+                    currentScript.subtitle = element.textContent;
+                } else if (element.classList.contains('core-theme-item')) {
+                    const index = parseInt(element.dataset.index);
+                    currentScript.coreThemes[index] = element.textContent;
+                } else if (element.classList.contains('emotion-arc-item')) {
+                    const index = parseInt(element.dataset.index);
+                    currentScript.emotionArc[index] = element.textContent;
+                } else if (element.classList.contains('style-guide-content')) {
+                    currentScript.styleGuide = element.textContent;
+                } else if (element.tagName === 'H3' && element.closest('.paragraph')) {
+                    const paragraphIndex = parseInt(element.closest('.paragraph').dataset.index);
+                    currentScript.paragraphs[paragraphIndex].title = element.textContent;
+                } else if (element.classList.contains('scene-number')) {
+                    const paragraphIndex = parseInt(element.closest('.paragraph').dataset.index);
+                    const sceneIndex = parseInt(element.closest('.scene').dataset.index);
+                    currentScript.paragraphs[paragraphIndex].scenes[sceneIndex].number = element.textContent;
+                } else if (element.classList.contains('scene-content')) {
+                    const paragraphIndex = parseInt(element.closest('.paragraph').dataset.index);
+                    const sceneIndex = parseInt(element.closest('.scene').dataset.index);
+                    currentScript.paragraphs[paragraphIndex].scenes[sceneIndex].content = element.textContent;
+                } else if (element.classList.contains('paragraph-prompt')) {
+                    const paragraphIndex = parseInt(element.closest('.paragraph').dataset.index);
+                    currentScript.paragraphs[paragraphIndex].prompt = element.textContent;
+                }
+            });
+        }
+
+        // 添加核心主题
+        function addCoreTheme() {
+            if (!currentScript) {
+                alert('请先导入或创建剧本');
+                return;
+            }
+            saveAllEdits();
+            currentScript.coreThemes.push('');
+            renderScript(currentScript);
+        }
+
+        // 添加情感弧线
+        function addEmotionArc() {
+            if (!currentScript) {
+                alert('请先导入或创建剧本');
+                return;
+            }
+            saveAllEdits();
+            currentScript.emotionArc.push('');
+            renderScript(currentScript);
+        }
+
+        // 在指定段落之前添加段落
+        function addParagraphBefore(targetParagraph) {
+            if (!currentScript) return;
+            
+            const paragraphIndex = parseInt(targetParagraph.dataset.index);
+            // 插入空内容的段落，通过placeholder提示
+            const newParagraph = {
+                title: '',
+                scenes: [
+                    {
+                        number: '',
+                        content: ''
+                    }
+                ],
+                prompt: ''
+            };
+
+            currentScript.paragraphs.splice(paragraphIndex, 0, newParagraph);
+            renderScript(currentScript);
+        }
+
+        // 在指定段落之后添加段落
+        function addParagraphAfter(targetParagraph) {
+            if (!currentScript) return;
+            
+            const paragraphIndex = parseInt(targetParagraph.dataset.index);
+            // 插入空内容的段落，通过placeholder提示
+            const newParagraph = {
+                title: '',
+                scenes: [
+                    {
+                        number: '',
+                        content: ''
+                    }
+                ],
+                prompt: ''
+            };
+
+            currentScript.paragraphs.splice(paragraphIndex + 1, 0, newParagraph);
+            renderScript(currentScript);
+        }
+
+        // 删除段落
+        function deleteParagraph(targetParagraph) {
+            if (!currentScript) return;
+            
+            const paragraphIndex = parseInt(targetParagraph.dataset.index);
+            if (confirm('确定要删除这个段落吗？')) {
+                currentScript.paragraphs.splice(paragraphIndex, 1);
+                renderScript(currentScript);
+            }
+        }
+
+        // 在指定镜头之前添加镜头
+        function addSceneBefore(targetScene) {
+            if (!currentScript) return;
+            
+            const paragraphDiv = targetScene.closest('.paragraph');
+            const paragraphIndex = parseInt(paragraphDiv.dataset.index);
+            const sceneIndex = parseInt(targetScene.dataset.index);
+            
+            // 插入空内容的镜头，通过placeholder提示
+            const newScene = {
+                number: '',
+                content: ''
+            };
+
+            currentScript.paragraphs[paragraphIndex].scenes.splice(sceneIndex, 0, newScene);
+            renderScript(currentScript);
+        }
+
+        // 在指定镜头之后添加镜头
+        function addSceneAfter(targetScene) {
+            if (!currentScript) return;
+            
+            const paragraphDiv = targetScene.closest('.paragraph');
+            const paragraphIndex = parseInt(paragraphDiv.dataset.index);
+            const sceneIndex = parseInt(targetScene.dataset.index);
+            
+            // 插入空内容的镜头，通过placeholder提示
+            const newScene = {
+                number: '',
+                content: ''
+            };
+
+            currentScript.paragraphs[paragraphIndex].scenes.splice(sceneIndex + 1, 0, newScene);
+            renderScript(currentScript);
+        }
+
+        // 删除镜头
+        function deleteScene(targetScene) {
+            if (!currentScript) return;
+            
+            const paragraphDiv = targetScene.closest('.paragraph');
+            const paragraphIndex = parseInt(paragraphDiv.dataset.index);
+            const sceneIndex = parseInt(targetScene.dataset.index);
+            
+            if (confirm('确定要删除这个镜头吗？')) {
+                currentScript.paragraphs[paragraphIndex].scenes.splice(sceneIndex, 1);
+                renderScript(currentScript);
+            }
+        }
+
+        // 复制代码功能
+        function copyCode(button) {
+            const pre = button.parentElement.nextElementSibling;
+            const code = pre.textContent;
+            
+            navigator.clipboard.writeText(code).then(() => {
+                const originalText = button.textContent;
+                button.textContent = '已复制';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('复制失败:', err);
+            });
+        }
+    </script>
+</body>
+</html>
