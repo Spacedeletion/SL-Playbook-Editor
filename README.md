@@ -4,7 +4,7 @@
 [![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/Spacedeletion/SL-Playbook-Editor/releases)
 
 <p align="center">
-  <img src="images/界面1.png" alt="神龙剧本编辑器主界面" width="800"/>
+  <img src="界面1.png" alt="神龙剧本编辑器主界面" width="800"/>
   <br>
   <em>主界面 - 清晰直观的剧本创作空间</em>
 </p>
@@ -28,7 +28,7 @@
 
 ### 🎨 编辑功能
 <p align="center">
-  <img src="images/界面2.png" alt="编辑功能界面" width="800"/>
+  <img src="界面2.png" alt="编辑功能界面" width="800"/>
   <br>
   <em>编辑界面 - 丰富的剧情创作工具</em>
 </p>
